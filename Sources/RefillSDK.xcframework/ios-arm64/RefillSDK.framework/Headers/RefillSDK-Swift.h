@@ -269,6 +269,7 @@ SWIFT_CLASS("_TtC9RefillSDK10Downloader")
 
 
 
+
 #endif
 #if defined(__cplusplus)
 #endif

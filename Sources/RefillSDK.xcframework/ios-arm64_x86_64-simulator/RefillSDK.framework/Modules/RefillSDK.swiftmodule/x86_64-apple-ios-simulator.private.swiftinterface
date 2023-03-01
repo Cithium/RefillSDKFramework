@@ -1,6 +1,6 @@
 // swift-interface-format-version: 1.0
 // swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
-// swift-module-flags: -target x86_64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name RefillSDK
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name RefillSDK
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import Foundation
 import LocalAuthentication
@@ -13,12 +13,11 @@ import _StringProcessing
 public typealias TextsRequestCompletion = RefillSDK.RequestCompletionHandler<[RefillSDK.Text]>
 public typealias MediasRequestCompletion = RefillSDK.RequestCompletionHandler<[RefillSDK.Media]>
 @_hasMissingDesignatedInitializers public class ContentService {
-  public static let shared: RefillSDK.ContentService
-  @objc deinit
-  public func configure(language: RefillSDK.CMSLanguage)
+  public func configure(language: RefillSDK.CMSLanguage, loadData: Swift.Bool = true)
   public func configuredLanguage() -> RefillSDK.CMSLanguage
   public func loadTexts(tags: [RefillSDK.CMSTag]? = nil, completion: RefillSDK.TextsRequestCompletion? = nil)
   public func loadMedia(tags: [RefillSDK.CMSTag]? = nil, completion: RefillSDK.MediasRequestCompletion? = nil)
+  @objc deinit
 }
 public struct Group : Swift.Decodable {
   public var id: Swift.String
@@ -40,7 +39,6 @@ extension Swift.Sequence where Self.Element == RefillSDK.Group {
   public func ordered() -> [RefillSDK.Group]
 }
 @_hasMissingDesignatedInitializers public class CustomerService {
-  convenience public init() throws
   public func get(_ completion: RefillSDK.CustomerRequestCompletionHandler?)
   public func update(customer: RefillSDK.MutableCustomer, _ completion: RefillSDK.CustomerRequestCompletionHandler?)
   public func delete(_ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
@@ -61,6 +59,7 @@ public struct Customer : Swift.Decodable {
   public var birthDay: Swift.Int?
   public var birthMonth: Swift.Int?
   public var pointsBalance: Swift.Int
+  public var phones: [RefillSDK.Phone]?
   public init(from decoder: Swift.Decoder) throws
 }
 extension RefillSDK.Customer {
@@ -72,19 +71,46 @@ public struct Invite : Swift.Decodable {
   public var inviteCode: Swift.String
   public init(from decoder: Swift.Decoder) throws
 }
+@_hasMissingDesignatedInitializers public class ContentKit {
+  final public let repository: RefillSDK.ContentRepository
+  public var contentService: RefillSDK.ContentService {
+    get
+  }
+  @objc deinit
+}
 public struct Phone : Swift.Decodable {
   public var id: Swift.Int64
   public var alias: Swift.String?
-  public var balanceAmount: Swift.Double?
   public var primary: Swift.Bool
   public var phoneNumber: Swift.String
   public var order: Swift.Int64?
-  public var topUps: [RefillSDK.TopUp]?
-  public var autoTopUpStatuses: [RefillSDK.AutoTopUpStatus]?
+  public var mobileSubType: Swift.String?
+  public var orders: [RefillSDK.Order]?
+  public var subscriptions: [RefillSDK.Subscription]?
+  @RefillSDK.DecodableDefault.False public var subscriptionAllowed: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public var maxSubscriptions: Swift.Int?
+  public var buckets: [RefillSDK.Bucket]?
+  public var balanceAmount: Swift.Double?
+  public var balanceCurrency: Swift.String?
+  @RefillSDK.DecodableDefault.False public var balanceAllowed: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public var remainingVoiceCalls: Swift.Int?
+  public var pointsBalance: Swift.Int?
+  public var nextExpiringPointsAmount: Swift.Int?
   public init(from decoder: Swift.Decoder) throws
 }
 extension RefillSDK.Phone {
   public var mobileTypeValue: RefillSDK.MobileType? {
+    get
+  }
+  public var balanceStatusValue: RefillSDK.BalanceStatus? {
     get
   }
 }
@@ -96,6 +122,17 @@ public struct PhoneNumberType : Swift.Decodable {
   }
   public var mobileType: RefillSDK.MobileType?
   public init(from decoder: Swift.Decoder) throws
+}
+public enum BalanceStatus : Swift.Int {
+  case unknown
+  case allowed
+  case notAllowed
+  case unavailable
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
 }
 public enum MobileType : Swift.Int, Swift.Decodable {
   case unknown
@@ -110,56 +147,65 @@ public enum MobileType : Swift.Int, Swift.Decodable {
 }
 public typealias AgreementRequestCompletionhandler = RefillSDK.RequestCompletionHandler<[RefillSDK.Agreement]>
 @_hasMissingDesignatedInitializers public class AgreementService {
-  public init()
-  public func get(_ completion: @escaping RefillSDK.AgreementRequestCompletionhandler)
+  public func get(_ completion: RefillSDK.AgreementRequestCompletionhandler?)
   public func sign(_ agreements: [RefillSDK.Agreement], completion: @escaping RefillSDK.RequestCompletionHandler<Swift.Bool>)
   @objc deinit
 }
 public typealias SimRegStatusRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.SimRegistrationStatus>
 @_hasMissingDesignatedInitializers public class SimRegistrationService {
-  public init()
   public func getStatus(for phoneNumber: Swift.String, _ completion: RefillSDK.SimRegStatusRequestCompletionHandler?)
   public func performSimRegistration(for phoneNumber: Swift.String, _ completion: @escaping RefillSDK.SimRegPortalRequestCompletionHandler)
   @objc deinit
 }
+@_hasMissingDesignatedInitializers public class SimRegistrationKit {
+  final public let repository: RefillSDK.SimRegistrationRepository
+  final public let simRegistrationPortalHelper: RefillSDK.SimRegistrationPortalHelper
+  public var simRegistrationService: RefillSDK.SimRegistrationService {
+    get
+  }
+  @objc deinit
+}
 public typealias PhoneRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.Phone>
 @_hasMissingDesignatedInitializers public class PhoneService {
-  convenience public init() throws
-  public func getPhonesForCustomer(includeTopUpsAndAutoTopUps: Swift.Bool, _ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Phone]>?)
-  public func getPhone(with phoneID: Swift.String, includeTopUpsAndAutoTopUps: Swift.Bool, _ completion: RefillSDK.PhoneRequestCompletionHandler?)
+  public func getPhonesForCustomer(includeOrdersAndSubscriptions: Swift.Bool = false, _ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Phone]>? = nil)
+  public func getPhone(with phoneID: Swift.String, includeOrdersAndSubscriptions: Swift.Bool, _ completion: RefillSDK.PhoneRequestCompletionHandler?)
   public func add(phone: RefillSDK.MutablePhone, _ completion: RefillSDK.PhoneRequestCompletionHandler?)
   public func update(phone: RefillSDK.MutablePhone, _ completion: RefillSDK.PhoneRequestCompletionHandler?)
   public func remove(phone: RefillSDK.MutablePhone, _ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
   public func fetchPhoneNumberType(phoneNumber: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.PhoneNumberType>?)
   @objc deinit
 }
-@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class AnonymousAutoTopUpService : RefillSDK.AbstractAutoTopUpService {
-  convenience public init()
-  public func performAnonymousAutoTopUp(with request: RefillSDK.AutoTopUpRequest, _ completion: RefillSDK.AutoTopUpRequestCompletionHandler?)
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class AnonymousSubscriptionService : RefillSDK.AbstractSubscriptionService {
+  public func performAnonymousSubscription(with request: RefillSDK.SubscriptionRequest, _ completion: RefillSDK.SubscriptionRequestCompletionHandler?)
   @objc deinit
 }
 public struct Agreement : Swift.Decodable {
   public var agreementId: Swift.String
   public var url: Swift.String
+  public var cmsValue: Swift.String?
+  @RefillSDK.DecodableDefault.True public var needsApproval: Swift.Bool {
+    get
+    set
+    _modify
+  }
   public init(from decoder: Swift.Decoder) throws
 }
 public typealias CustomerRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.Customer>
 @_hasMissingDesignatedInitializers public class AuthenticationService {
-  public static var isLoggedIn: Swift.Bool {
+  public var isLoggedInLocally: Swift.Bool {
     get
   }
-  public init()
   public func register(with request: RefillSDK.MutableCustomer, _ completion: RefillSDK.CustomerRequestCompletionHandler?)
   public func login(username: Swift.String, password: Swift.String, _ completion: RefillSDK.CustomerRequestCompletionHandler?)
+  public func loginWithExistingCredentials(_ completion: RefillSDK.CustomerRequestCompletionHandler?)
   public func logout(_ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
   public func forgotPassword(for phoneNumber: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
   @objc deinit
 }
 @_hasMissingDesignatedInitializers public class RewardService {
-  convenience public init() throws
   public func getBonusStatuses(_ completion: RefillSDK.RequestCompletionHandler<[Swift.String]>?)
   public func getEvents(_ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Event]>?)
-  public func getInvite(_ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Invite]>?)
+  public func getInvite(_ completion: RefillSDK.RequestCompletionHandler<RefillSDK.Invite>?)
   public func getVouchers(_ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Voucher]>?)
   @objc deinit
 }
@@ -175,25 +221,26 @@ public class Media : Swift.Decodable {
 }
 public typealias PPRequestCompletionHandler = ((Swift.String?, RefillSDK.NetworkError?) -> Swift.Void)
 @_hasMissingDesignatedInitializers public class PaymentPortalHelper {
-  public static let shared: RefillSDK.PaymentPortalHelper
   @discardableResult
   public func processPaymentResult(url: Foundation.URL, options: [UIKit.UIApplication.OpenURLOptionsKey : Any] = [:]) -> Swift.Bool
   public func cancel()
   @objc deinit
 }
-public class AutoTopUpStatus : Swift.Decodable {
+public class Subscription : Swift.Decodable {
   public var id: Swift.String
   public var phoneNumber: Swift.String?
   public var nextTopupDate: Foundation.Date
   public var amount: Swift.Float?
-  public var active: Swift.Bool
+  public var isActive: Swift.Bool
   public var order: Swift.Int
   public var isAnonymous: Swift.Bool
   public var refillOrderId: Swift.String?
   public var reference: Swift.String?
-  public var remainingTopupOrders: Swift.Int
-  public var requiredTopupOrders: Swift.Int
+  public var remainingTopupOrders: Swift.Int?
+  public var requiredTopupOrders: Swift.Int?
   public var earnedPoints: Swift.Int?
+  public var phoneId: Swift.Int?
+  public var customerId: Swift.Int?
   public var productName: Swift.String? {
     get
   }
@@ -204,15 +251,12 @@ public class AutoTopUpStatus : Swift.Decodable {
   required public init(from decoder: Swift.Decoder) throws
 }
 public struct Endpoint {
-  public var headers: RefillSDK.HTTPHeaders?
-  public let method: RefillSDK.HTTPMethod
-  public let path: Swift.String
-  public let params: RefillSDK.Parameters?
-  public let encoding: RefillSDK.ParameterEncoding?
-  public let validationExceptions: [Swift.Int : RefillSDK.NetworkError]?
   public init(path: Swift.String, method: RefillSDK.HTTPMethod, params: RefillSDK.Parameters? = nil, headers: [Swift.String : Swift.String]? = nil, encoding: RefillSDK.ParameterEncoding? = nil, validationExceptions: [Swift.Int : RefillSDK.NetworkError]? = nil)
 }
-public protocol NetworkErrorProtocol : Swift.CustomStringConvertible, Swift.Error {
+public struct AuthenticatedEndpoint {
+  public init(path: Swift.String, method: RefillSDK.HTTPMethod, sessionToken: Swift.String, params: RefillSDK.Parameters? = nil, headers: [Swift.String : Swift.String]? = nil, encoding: RefillSDK.ParameterEncoding? = nil, validationExceptions: [Swift.Int : RefillSDK.NetworkError]? = nil)
+}
+public protocol NetworkErrorProtocol : Foundation.LocalizedError, Swift.CustomStringConvertible {
   func isEqual(err: RefillSDK.NetworkErrorProtocol) -> Swift.Bool
 }
 public enum NetworkError : RefillSDK.NetworkErrorProtocol, Swift.Equatable {
@@ -226,10 +270,13 @@ public enum NetworkError : RefillSDK.NetworkErrorProtocol, Swift.Equatable {
   case downForMaintenance(Swift.String)
   case APIVersionEOL(Swift.String)
   case unknown(Swift.String)
-  public var localizedDescription: Swift.String {
+  public var errorDescription: Swift.String? {
     get
   }
   public var description: Swift.String {
+    get
+  }
+  public var isGlobalError: Swift.Bool {
     get
   }
   public static func error(with error: Swift.Error) -> RefillSDK.NetworkError
@@ -243,9 +290,74 @@ extension RefillSDK.NetworkErrorProtocol where Self : Swift.Equatable {
 extension UIKit.UIImageView {
   @_Concurrency.MainActor(unsafe) public func forCMS(key: Swift.String, language: RefillSDK.CMSLanguage)
 }
-public typealias TopUpRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.TopUpStatus>
-@_hasMissingDesignatedInitializers public class AbstractTopUpService {
+public typealias OrderRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.OrderStatus>
+@_hasMissingDesignatedInitializers public class AbstractOrderService {
   @objc deinit
+}
+@_hasMissingDesignatedInitializers public class RefillSDKApp {
+  public static var shared: RefillSDK.RefillSDKApp {
+    get
+  }
+  public static func configure(language: RefillSDK.CMSLanguage = .swedish)
+  public var contentKit: RefillSDK.ContentKit {
+    get
+  }
+  public var productKit: RefillSDK.ProductKit {
+    get
+  }
+  public var refillKit: RefillSDK.RefillKit {
+    get
+  }
+  public var simRegistrationKit: RefillSDK.SimRegistrationKit {
+    get
+  }
+  public func changeLanguage(language: RefillSDK.CMSLanguage, reloadContentData: Swift.Bool = false)
+  @objc deinit
+}
+public struct Order : Swift.Decodable {
+  public var id: Swift.Int64
+  public var amountName: Swift.String?
+  public var articleId: Swift.String?
+  @RefillSDK.DecodableDefault.False public var autoBonus: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public var creationDate: Swift.String?
+  public var creationTime: Swift.String?
+  public var created: Swift.String?
+  public var currency: Swift.String?
+  public var debitAmount: Swift.Double?
+  @RefillSDK.DecodableDefault.False public var finished: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public var originalAmount: Swift.Double?
+  public var paymentMethod: Swift.String?
+  public var phoneNumber: Swift.String?
+  public var pointsEarned: Swift.Int64?
+  public var pointsUsed: Swift.Int64?
+  public var pricePlan: Swift.String?
+  @RefillSDK.DecodableDefault.False public var receiptEnabled: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public var reference: Swift.String?
+  public var resultMessage: Swift.String?
+  public var type: Swift.String?
+  @RefillSDK.DecodableDefault.False public var success: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+extension RefillSDK.Order {
+  public var productName: Swift.String? {
+    get
+  }
 }
 public struct Catalog : Swift.Decodable {
   public var id: Swift.String
@@ -281,18 +393,19 @@ public class MutableCustomer : Swift.Encodable {
   @objc deinit
   public func encode(to encoder: Swift.Encoder) throws
 }
-@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class TopUpService : RefillSDK.AbstractTopUpService {
-  convenience public init()
-  public func performAuthTopUp(with request: RefillSDK.TopUpRequest, _ completion: RefillSDK.TopUpRequestCompletionHandler?)
-  public func get(for phoneNumber: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.TopUp]>?, includeFailedOrders: Swift.Bool = false, pageSize: Swift.Int = 10)
+@_hasMissingDesignatedInitializers public class OrderService : RefillSDK.AbstractOrderService {
+  public func performAuthOrder(with request: RefillSDK.OrderRequest, _ completion: RefillSDK.OrderRequestCompletionHandler?)
+  public func getOrders(phoneNumber: Swift.String, includeFailedOrders: Swift.Bool = false, pageSize: Swift.Int = 10, _ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Order]>?)
+  public func getOrder(refillOrderId: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.Order>?)
+  public func performRewardOrder(phoneNumber: Swift.String, orderRewardId: Swift.Int, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.RewardOrderStatus>?)
   @objc deinit
 }
-public class AutoTopUpRequest : Swift.Encodable {
+public class SubscriptionRequest : Swift.Encodable {
   public var phoneNumber: Swift.String
   public var productReference: Swift.String
-  public var nextTopup: Foundation.Date
-  public var topupAmount: Swift.Float?
-  public init(phoneNumber: Swift.String, productReference: Swift.String, nextTopup: Foundation.Date, topupAmount: Swift.Float? = nil)
+  public var nextTopupDate: Foundation.Date
+  public var orderAmount: Swift.Float?
+  public init(phoneNumber: Swift.String, productReference: Swift.String, nextTopupDate: Foundation.Date, orderAmount: Swift.Float? = nil)
   @objc deinit
   public func encode(to encoder: Swift.Encoder) throws
 }
@@ -310,7 +423,7 @@ public class MutablePhone : Swift.Encodable {
   public var phoneID: Swift.String?
   public var phoneNumber: Swift.String?
   public var alias: Swift.String?
-  public init()
+  public init(phoneID: Swift.String? = nil, phoneNumber: Swift.String? = nil, alias: Swift.String? = nil)
   @objc deinit
   public func encode(to encoder: Swift.Encoder) throws
 }
@@ -336,54 +449,52 @@ public enum ParameterEncoding {
     get
   }
 }
-public struct TopUp : Swift.Decodable {
-  public var id: Swift.Int64
-  public var amountName: Swift.String?
-  public var articleId: Swift.String?
-  @RefillSDK.DecodableDefault.False public var autoBonus: Swift.Bool {
+public struct Bucket : Swift.Decodable {
+  public var id: Swift.String
+  public var order: Swift.Int64?
+  public var type: Swift.Int?
+  public var name: Swift.String?
+  public var noOfCalls: Swift.Int64?
+  public var noOfSms: Swift.Int?
+  public var maxNoOfSms: Swift.Int?
+  public var noOfMms: Swift.Int?
+  public var maxNoOfMms: Swift.Int?
+  public var noOfKb: Swift.Int?
+  public var maxNoOfKb: Swift.Int64?
+  public var noOfMinutes: Swift.Int?
+  public var maxNoOfMinutes: Swift.Int?
+  public var expirationDate: Swift.String?
+  public var bucketType: RefillSDK.Bucket.BucketType? {
     get
-    set
-    _modify
   }
-  public var creationDate: Swift.String?
-  public var creationTime: Swift.String?
-  public var created: Swift.String?
-  public var curreny: Swift.String?
-  public var debitAmount: Swift.Double?
-  @RefillSDK.DecodableDefault.False public var finished: Swift.Bool {
-    get
-    set
-    _modify
-  }
-  public var originalAmount: Swift.Double?
-  public var paymentMethod: Swift.String?
-  public var phoneNumber: Swift.String?
-  public var pointsEarned: Swift.Int64?
-  public var pointsUsed: Swift.Int64?
-  public var pricePlan: Swift.String?
-  @RefillSDK.DecodableDefault.False public var receiptEnabled: Swift.Bool {
-    get
-    set
-    _modify
-  }
-  public var reference: Swift.String?
-  public var resultMessage: Swift.String?
-  public var type: Swift.String?
-  @RefillSDK.DecodableDefault.False public var success: Swift.Bool {
-    get
-    set
-    _modify
+  public enum BucketType : Swift.Int {
+    case unknown
+    case combo
+    case data
+    case sms
+    case voice
+    case mms
+    case money
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
   }
   public init(from decoder: Swift.Decoder) throws
 }
-extension RefillSDK.TopUp {
-  public var productName: Swift.String? {
-    get
-  }
+public struct RewardOrderStatus : Swift.Decodable {
+  public var refillOrderId: Swift.String
+  public var status: Swift.Int
+  public var finished: Swift.Bool
+  public var success: Swift.Bool
+  public var subscriptionAllowed: Swift.Bool
+  public var receiptEnabled: Swift.Bool
+  public var earnedPoints: Swift.Int
+  public init(from decoder: Swift.Decoder) throws
 }
-@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class AnonymousTopUpService : RefillSDK.AbstractTopUpService {
-  convenience public init()
-  public func performAnonymousTopUp(with request: RefillSDK.TopUpRequest, _ completion: RefillSDK.TopUpRequestCompletionHandler?)
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class AnonymousOrderService : RefillSDK.AbstractOrderService {
+  public func performAnonymousOrder(with request: RefillSDK.OrderRequest, _ completion: RefillSDK.OrderRequestCompletionHandler?)
   @objc deinit
 }
 public struct Text : Swift.Decodable {
@@ -391,6 +502,60 @@ public struct Text : Swift.Decodable {
   public var message: Swift.String
   public var tags: [RefillSDK.CMSTag]?
   public init(from decoder: Swift.Decoder) throws
+}
+@_hasMissingDesignatedInitializers public class RefillKit {
+  final public let repository: RefillSDK.RefillRepository
+  final public let paymentPortalHelper: RefillSDK.PaymentPortalHelper
+  public var customerService: RefillSDK.CustomerService {
+    get
+  }
+  public var authenticationService: RefillSDK.AuthenticationService {
+    get
+  }
+  public var cardRegistrationService: RefillSDK.CardRegistrationService {
+    get
+  }
+  public var orderService: RefillSDK.OrderService {
+    get
+  }
+  public var anonymousOrderService: RefillSDK.AnonymousOrderService {
+    get
+  }
+  public var subscriptionService: RefillSDK.SubscriptionService {
+    get
+  }
+  public var anonymousSubscriptionService: RefillSDK.AnonymousSubscriptionService {
+    get
+  }
+  public var phoneService: RefillSDK.PhoneService {
+    get
+  }
+  public var agreementService: RefillSDK.AgreementService {
+    get
+  }
+  public var receiptService: RefillSDK.ReceiptService {
+    get
+  }
+  public var rewardService: RefillSDK.RewardService {
+    get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ContentRepository : Foundation.ObservableObject {
+  @Combine.Published @_projectedValueProperty($texts) public var texts: [RefillSDK.Text] {
+    get
+  }
+  public var $texts: Combine.Published<[RefillSDK.Text]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($medias) public var medias: [RefillSDK.Media] {
+    get
+  }
+  public var $medias: Combine.Published<[RefillSDK.Media]>.Publisher {
+    get
+  }
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
 }
 public enum EnvironmentTag : Swift.String {
   case test
@@ -515,6 +680,11 @@ public struct ContentProperties : Swift.Decodable {
     set
     _modify
   }
+  public var pointsAmount: Swift.Int16?
+  public var pointsEarned: Swift.Int16?
+  public var pointsAdjustedAmount: Swift.Double?
+  public var rangeMin: Swift.Int16?
+  public var rangeMax: Swift.Int16?
   public init(from decoder: Swift.Decoder) throws
 }
 public struct SimRegistrationStatus : Swift.Decodable {
@@ -536,6 +706,64 @@ public struct SimRegistrationStatus : Swift.Decodable {
     }
   }
   public init(from decoder: Swift.Decoder) throws
+}
+@_hasMissingDesignatedInitializers public class RefillRepository : Foundation.ObservableObject {
+  @Combine.Published @_projectedValueProperty($customer) public var customer: RefillSDK.Customer? {
+    get
+  }
+  public var $customer: Combine.Published<RefillSDK.Customer?>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($agreements) public var agreements: [RefillSDK.Agreement] {
+    get
+  }
+  public var $agreements: Combine.Published<[RefillSDK.Agreement]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($bonusStatuses) public var bonusStatuses: [Swift.String] {
+    get
+  }
+  public var $bonusStatuses: Combine.Published<[Swift.String]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($events) public var events: [RefillSDK.Event] {
+    get
+  }
+  public var $events: Combine.Published<[RefillSDK.Event]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($invite) public var invite: RefillSDK.Invite? {
+    get
+  }
+  public var $invite: Combine.Published<RefillSDK.Invite?>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($vouchers) public var vouchers: [RefillSDK.Voucher] {
+    get
+  }
+  public var $vouchers: Combine.Published<[RefillSDK.Voucher]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($anonymousOrderStatuses) public var anonymousOrderStatuses: [RefillSDK.OrderStatus] {
+    get
+  }
+  public var $anonymousOrderStatuses: Combine.Published<[RefillSDK.OrderStatus]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($orderStatuses) public var orderStatuses: [RefillSDK.OrderStatus] {
+    get
+  }
+  public var $orderStatuses: Combine.Published<[RefillSDK.OrderStatus]>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($anonymousSubscriptions) public var anonymousSubscriptions: [RefillSDK.Subscription] {
+    get
+  }
+  public var $anonymousSubscriptions: Combine.Published<[RefillSDK.Subscription]>.Publisher {
+    get
+  }
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
 }
 public protocol DecodableDefaultSource {
   associatedtype Value : Swift.Decodable
@@ -613,7 +841,6 @@ extension UIKit.UIImage {
   public class func forCMS(url: Swift.String, language: RefillSDK.CMSLanguage) -> UIKit.UIImage?
 }
 @_hasMissingDesignatedInitializers public class CardRegistrationService {
-  convenience public init() throws
   public func cancel()
   public func registerCard(_ completion: @escaping RefillSDK.PPRequestCompletionHandler)
   public func removeCard(completion: RefillSDK.RequestCompletionHandler<Swift.String>?)
@@ -624,8 +851,21 @@ extension Foundation.NSNotification.Name {
   public static let ServerDownForMaintenance: Foundation.Notification.Name
   public static let APIVersionEOL: Foundation.Notification.Name
 }
-public typealias AutoTopUpRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.AutoTopUpStatus>
-@_hasMissingDesignatedInitializers public class AbstractAutoTopUpService {
+@_hasMissingDesignatedInitializers public class SimRegistrationRepository : Foundation.ObservableObject {
+  @Combine.Published @_projectedValueProperty($simRegistrationStatus) public var simRegistrationStatus: [Swift.String : RefillSDK.SimRegistrationStatus] {
+    get
+  }
+  public var $simRegistrationStatus: Combine.Published<[Swift.String : RefillSDK.SimRegistrationStatus]>.Publisher {
+    get
+  }
+  public func setSimRegistrationStatus(with status: RefillSDK.SimRegistrationStatus, for phoneNumber: Swift.String)
+  public func getStatusesNeedRegistration() -> [Swift.String : RefillSDK.SimRegistrationStatus]
+  public func clearStatuses()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+public typealias SubscriptionRequestCompletionHandler = RefillSDK.RequestCompletionHandler<RefillSDK.Subscription>
+@_hasMissingDesignatedInitializers public class AbstractSubscriptionService {
   @objc deinit
 }
 public struct Product : Swift.Decodable {
@@ -647,20 +887,19 @@ public struct Event : Swift.Decodable {
   public var id: Swift.String?
   public var title: Swift.String?
   public var type: Swift.String?
+  public var properties: RefillSDK.EventProperties?
   public init(from decoder: Swift.Decoder) throws
 }
-@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class AutoTopUpService : RefillSDK.AbstractAutoTopUpService {
-  convenience public init()
-  public func performAutoTopUp(with request: RefillSDK.AutoTopUpRequest, _ completion: RefillSDK.AutoTopUpRequestCompletionHandler?)
-  public func get(_ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.AutoTopUpStatus]>?, for phoneID: Swift.String? = nil)
-  public func get(with autoTopUpID: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.AutoTopUpStatus>?)
-  public func update(with autoTopUpID: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.AutoTopUpStatus>?)
+@_hasMissingDesignatedInitializers public class SubscriptionService : RefillSDK.AbstractSubscriptionService {
+  public func performSubscription(with request: RefillSDK.SubscriptionRequest, _ completion: RefillSDK.SubscriptionRequestCompletionHandler?)
+  public func get(_ completion: RefillSDK.RequestCompletionHandler<[RefillSDK.Subscription]>?, for phoneID: Swift.String? = nil)
+  public func get(with autoTopUpID: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.Subscription>?)
+  public func update(with autoTopUpID: Swift.String, request: RefillSDK.SubscriptionRequest, _ completion: RefillSDK.RequestCompletionHandler<RefillSDK.Subscription>?)
   public func delete(with autoTopUpID: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
   @objc deinit
 }
 public typealias CatalogsRequestCompletion = RefillSDK.RequestCompletionHandler<[RefillSDK.Catalog]>
 @_hasMissingDesignatedInitializers public class ProductService {
-  public init()
   public func getCatalogs(for phoneNumber: Swift.String? = nil, completion: RefillSDK.CatalogsRequestCompletion? = nil)
   @objc deinit
 }
@@ -680,13 +919,22 @@ public struct VoucherProperties : Swift.Decodable {
 }
 public typealias SimRegPortalRequestCompletionHandler = ((Swift.String?, RefillSDK.NetworkError?) -> Swift.Void)
 @_hasMissingDesignatedInitializers public class SimRegistrationPortalHelper {
-  public static let shared: RefillSDK.SimRegistrationPortalHelper
   @discardableResult
   public func processSimRegistrationResult(url: Foundation.URL, options: [UIKit.UIApplication.OpenURLOptionsKey : Any] = [:]) -> Swift.Bool
   public func cancel()
   @objc deinit
 }
 public typealias RequestCompletionHandler<T> = ((_ object: T?, _ error: RefillSDK.NetworkError?, _ statusCode: Swift.Int) -> Swift.Void) where T : Swift.Decodable
+@_hasMissingDesignatedInitializers public class ProductRepository : Foundation.ObservableObject {
+  @Combine.Published @_projectedValueProperty($catalogs) public var catalogs: [RefillSDK.Catalog] {
+    get
+  }
+  public var $catalogs: Combine.Published<[RefillSDK.Catalog]>.Publisher {
+    get
+  }
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
 @objc public class Downloader : ObjectiveC.NSObject {
   public static let shared: RefillSDK.Downloader
   public init(cache: RefillSDK.Cache = Cache.shared)
@@ -698,6 +946,17 @@ public typealias RequestCompletionHandler<T> = ((_ object: T?, _ error: RefillSD
 extension RefillSDK.Downloader {
   public func image(at url: Foundation.URL, forceDownload: Swift.Bool = false, completion: @escaping (UIKit.UIImage?) -> Swift.Void)
 }
+public struct EventProperties : Swift.Decodable {
+  public var expires: Foundation.Date?
+  public var productReference: Swift.String?
+  public var orderRewardId: Swift.Int?
+  @RefillSDK.DecodableDefault.False public var isUsed: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
 public enum RefillPaymentMethod : Swift.String, Swift.Encodable {
   case card
   case swish
@@ -708,7 +967,7 @@ public enum RefillPaymentMethod : Swift.String, Swift.Encodable {
     get
   }
 }
-public class TopUpRequest : Swift.Encodable {
+public class OrderRequest : Swift.Encodable {
   public var phoneNumber: Swift.String
   public var productReference: Swift.String
   public var paymentMethod: RefillSDK.RefillPaymentMethod
@@ -722,7 +981,7 @@ public struct Article : Swift.Decodable {
   public var productReference: Swift.String
   public init(from decoder: Swift.Decoder) throws
 }
-public struct TopUpStatus : Swift.Decodable {
+public struct OrderStatus : Swift.Decodable {
   public var paymentOrderId: Swift.String
   public var refillOrderId: Swift.String
   @RefillSDK.DecodableDefault.False public var finished: Swift.Bool {
@@ -747,13 +1006,22 @@ extension Swift.String {
   public func cmsLocalized(language: RefillSDK.CMSLanguage) -> Swift.String
 }
 @_hasMissingDesignatedInitializers public class ReceiptService {
-  public init()
   public func sendReceipt(to email: Swift.String, for orderID: Swift.String, _ completion: RefillSDK.RequestCompletionHandler<Swift.Bool>?)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ProductKit {
+  final public let repository: RefillSDK.ProductRepository
+  public var productService: RefillSDK.ProductService {
+    get
+  }
   @objc deinit
 }
 extension Foundation.URLComponents {
   public mutating func add(params: RefillSDK.Parameters)
 }
+extension RefillSDK.BalanceStatus : Swift.Equatable {}
+extension RefillSDK.BalanceStatus : Swift.Hashable {}
+extension RefillSDK.BalanceStatus : Swift.RawRepresentable {}
 extension RefillSDK.MobileType : Swift.Equatable {}
 extension RefillSDK.MobileType : Swift.Hashable {}
 extension RefillSDK.MobileType : Swift.RawRepresentable {}
@@ -762,6 +1030,9 @@ extension RefillSDK.HTTPMethod : Swift.Hashable {}
 extension RefillSDK.HTTPMethod : Swift.RawRepresentable {}
 extension RefillSDK.ParameterEncoding : Swift.Equatable {}
 extension RefillSDK.ParameterEncoding : Swift.Hashable {}
+extension RefillSDK.Bucket.BucketType : Swift.Equatable {}
+extension RefillSDK.Bucket.BucketType : Swift.Hashable {}
+extension RefillSDK.Bucket.BucketType : Swift.RawRepresentable {}
 extension RefillSDK.EnvironmentTag : Swift.Equatable {}
 extension RefillSDK.EnvironmentTag : Swift.Hashable {}
 extension RefillSDK.EnvironmentTag : Swift.RawRepresentable {}
