@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/RefillSDK-Swift.h</key>
 		<data>
-		j8QhHlJkawlpSHNaQuxXbpC5fjE=
+		OwMc1Ce4sPc19yWX8LN6vrQOrSQ=
 		</data>
 		<key>Headers/RefillSDK.h</key>
 		<data>
@@ -18,43 +18,43 @@
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
-		M5nIs3RWnUN7IzUBqyfpX+9BFhk=
+		Ur0TAEuDNkB0NAa7XN5dNnVwSMg=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		gFxsJpAiNhMIZv8LYvilXJimI4I=
+		9N+pfcYTVFTRLpRPHnMKJ7KNziQ=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		i5CdDbXQEj/BcI06M3Em4akvV0E=
+		bdKXFQf8Nbwx8BXDpxglRK2tJBQ=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		gFxsJpAiNhMIZv8LYvilXJimI4I=
+		9N+pfcYTVFTRLpRPHnMKJ7KNziQ=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		mm7VE5vlYRd6nHCkXehJWskMp8Y=
+		kP4AOtwhQQS39Dj133BocyUCpbY=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		M5nIs3RWnUN7IzUBqyfpX+9BFhk=
+		Ur0TAEuDNkB0NAa7XN5dNnVwSMg=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		SFlKOjJENr/7V+zLhMvubZlBaYI=
+		X47Y/8k1uvPCOS9c9n8qwU1HBsM=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		hC7OcBGoobwkh3UQnq0lzesQJTQ=
+		nJRdc+oASo1gFbyaRJFc6fTO4Ew=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		SFlKOjJENr/7V+zLhMvubZlBaYI=
+		X47Y/8k1uvPCOS9c9n8qwU1HBsM=
 		</data>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		9IrJgLdcudtdP4hXlSd8BTTbujw=
+		DL7T+XILY36etazO2Z4Ykhi04LA=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -67,7 +67,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZuHM0O1XpaPHSlPV0c7SZjVMYdOeLKUyUmH9NvjRFQo=
+			yzcB2bfO84GNfblcVcbTHPtUpVoiG2gEupRAZf2TyCg=
 			</data>
 		</dict>
 		<key>Headers/RefillSDK.h</key>
@@ -81,70 +81,70 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZPz0tMGWV12pVNctSuSyTtpzxeUI3Nh9vamy+Naf8Bk=
+			XREgO/F+sudJm3hJI16UjmwLRFWxHTBwTkhKL0fs0O8=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Uef2/hjSACaO9Jc8TeBg8cFaI39ZMcnu2smM6mzZrzY=
+			zOTlr3OzAecVkrCqbtYzSr/GyxB1yWr2etl6GbOleNk=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wQbaodK1oN3jMv7HD/D3ZiUZQErqwk0eCliFe1rxB9k=
+			DbyHiugPespLwFXm5OhPRDvmN6Tt+r6qSKphw/D508I=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Uef2/hjSACaO9Jc8TeBg8cFaI39ZMcnu2smM6mzZrzY=
+			zOTlr3OzAecVkrCqbtYzSr/GyxB1yWr2etl6GbOleNk=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			O0Njjm69/vM5xz4xP4rnGCMoZR2FGPJKlnVqPRecNHI=
+			2NhNEkQDnlZU562k/5Z9WQFVHA72JvhlNW5NDcKeEK4=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZPz0tMGWV12pVNctSuSyTtpzxeUI3Nh9vamy+Naf8Bk=
+			XREgO/F+sudJm3hJI16UjmwLRFWxHTBwTkhKL0fs0O8=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			yzBce4rrHef4oi35IK0O4CqBpGmtcTbphzJLn1s4kHI=
+			CVvGZWddP/6qVUcqhX6cinjZZ0jHwK3aT1ij/jkXRnI=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			JtKWnazA/bxLf6567DyV2FUZUjD5LEUcka3QWULRkSk=
+			tVjqj0TZnIQouVv3yScGkhoMl2/bnduBtPlQVN7DiDw=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			yzBce4rrHef4oi35IK0O4CqBpGmtcTbphzJLn1s4kHI=
+			CVvGZWddP/6qVUcqhX6cinjZZ0jHwK3aT1ij/jkXRnI=
 			</data>
 		</dict>
 		<key>Modules/RefillSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			NIz0tDn5PGU+dBIqAtFjmhoOsUPsKfPQfKDGrOCb7ts=
+			nav082ugvbfl7By5ivlUvEsCi0LmKtZzO0G/m/U1az4=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
