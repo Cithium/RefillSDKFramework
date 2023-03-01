@@ -1,0 +1,11 @@
+framework module RefillSDK {
+  umbrella header "RefillSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module RefillSDK.Swift {
+  header "RefillSDK-Swift.h"
+  requires objc
+}
